@@ -10,6 +10,11 @@ dc_service() {
   echo $dc_service
 }
 
+dc_js_lint() {
+  eval $(parse_yaml .dc-shorty.yml "dc_")
+  echo $dc_lint_js
+}
+
 dc_coffee_lint() {
   eval $(parse_yaml .dc-shorty.yml "dc_")
   echo $dc_lint_coffee
@@ -63,6 +68,7 @@ dc_init() {
       echo "#  slim: slim-lint" >> .dc-shorty.yml
       echo "#  haml: haml-lint" >> .dc-shorty.yml
       echo "#  erb: erblint" >> .dc-shorty.yml
+      echo "#  js: rake eslint:run_all" >> .dc-shorty.yml
       echo "#  coffee: rails coffeelint" >> .dc-shorty.yml
     fi
   fi
@@ -180,6 +186,12 @@ dc_start_linters() {
   if [ ! -z "$erb_lint_run" ] && [ "$1" == 'erb' -o "$1" == 'all' ]; then
     echo 'Start erb lint'    
     docker-compose exec $(dc_service) bundle exec $erb_lint_run && echo ''
+  fi
+
+  local js_lint_run=$(dc_js_lint)
+  if [ ! -z "$js_lint_run" ] && [ "$1" == 'js' -o "$1" == 'all' ]; then
+    echo 'Start js lint'    
+    docker-compose exec $(dc_service) bundle exec $js_lint_run && echo ''
   fi
 
   local coffee_lint_run=$(dc_coffee_lint)
