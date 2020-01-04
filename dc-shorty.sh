@@ -80,7 +80,7 @@ dc_up() {
   local service=$(dc_service)
   if [ ! -z "$service" ]; then
     local dir=${PWD##*/}
-    local container="${dir//_}_${service}_1"
+    local container="${dir}_${service}_1"
     docker-compose up -d    
     if [ "$1" != "-d" ]; then
       docker attach $container
